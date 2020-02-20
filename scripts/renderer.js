@@ -98,6 +98,94 @@ class Renderer {
     // framebuffer:  canvas ctx image data
     drawLine(pt0, pt1, color, framebuffer)
     {
-        // code from class here
+        drawLine(pt0.x, pt0.y, pt1.x, pt1.y, color, framebuffer)
     }
+        
+    function drawLine( x0, y0, x1, y1, color, framebuffer)
+    {
+		if(Math.abs(y1-y0) <= Math.abs(x1 -x0))
+        {
+			if(x0 < x1)
+            {
+				drawLineLow(x0, y0, x1, y1, color, framebuffer);
+			}
+			else
+            {
+				drawLineLow(x1, y1, x0, y0, color, framebuffer);
+			}
+		}
+		else
+        {
+			if (y0 < y1) 
+            {
+				drawLineHigh(x0, y0, x1,y1, color, framebuffer);
+			}
+			else
+            {
+				drawLineHigh(x1, y1, x0, y0, color, framebuffer);
+			}
+		}
+	}
+	
+	function drawLineLow(x0, y0, x1, y1, color, framebuffer)
+	{
+		var A = y1 -y0;
+		var B = -(x1 - x0);
+		var iy = 1; //incrementing y
+		if(A<0){
+			
+			iy = -1; //this way we are actually subracting
+			A *= -1; //flips the slope 
+		}
+		var D = 2*A + B;
+		var y = y0;
+		var x = x0;
+		
+		while(x <= x1)
+		{
+			setFramebufferColor(framebuffer, pixelIndex(x,y, framebuffer), color);
+			x += 1;
+			if(D <= 0)
+			{
+				D += 2 * A;
+			}
+			else
+			{
+				D += 2 * A + 2 * B;
+				y += iy;
+            }	
+		}
+	}
+	
+	function drawLineHigh(x0, y0, x1, y1, color, framebuffer)
+	{
+		var A = x1 -x0;
+		var B = y0 -y1;
+		var ix = 1; //incrementing x
+		if(A < 0)
+        {
+			ix = -1; //this way we are actually subracting
+			A *= -1; //flips the slope 
+		}
+		var D = 2*A + B;
+		var y = y0;
+		var x = x0;
+		
+		while(y < y1)
+		{
+			
+			setFramebufferColor(framebuffer, pixelIndex(x,y, framebuffer), color);
+			y+=1;
+			if(D <= 0)
+			{
+				D += (2 * A);
+			}
+			else
+			{
+				D += (2 * A + 2 * B);
+				x += ix;
+			}	
+		}
+	}
+    
 };
