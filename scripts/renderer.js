@@ -48,7 +48,12 @@ class Renderer {
 
     // framebuffer:  canvas ctx image data
     drawSlide0(framebuffer) {
-        
+		//var rect = {
+		var left_bottom = {x: 200, y: 100};
+		var right_top = {x: 700, y: 400};
+		var color = [75, 0 ,130, 255];
+		//}
+		this.drawRectangle(left_bottom, right_top, color, framebuffer);
     }
 
     // framebuffer:  canvas ctx image data
@@ -71,7 +76,17 @@ class Renderer {
     // color:        array of int [R, G, B, A]
     // framebuffer:  canvas ctx image data
     drawRectangle(left_bottom, right_top, color, framebuffer) {
-        
+        //drawLine(pt0.x, pt0.y, pt1.x, pt1.y, color, framebuffer);
+		//topleft to top right
+		this.drawLine(left_bottom.x, right_top.y, right_top.x, right_top.y, color, framebuffer);
+		//top right to bottom right
+		this.drawLine(right_top.x, right_top.y, right_top.x, left_bottom.y, color, framebuffer);
+		//bottom right to bottom left
+		this.drawLine(right_top.x, left_bottom.y, left_bottom.x, left_bottom.y, color, framebuffer);
+		//bottom left to top left
+		this.drawLine(left_bottom.x, left_bottom.y, left_bottom.x, right_top.y, color, framebuffer);
+		
+		
     }
 
     // center:       object ({x: __, y: __})
@@ -98,36 +113,36 @@ class Renderer {
     // framebuffer:  canvas ctx image data
     drawLine(pt0, pt1, color, framebuffer)
     {
-        drawLine(pt0.x, pt0.y, pt1.x, pt1.y, color, framebuffer)
+        drawLine(pt0.x, pt0.y, pt1.x, pt1.y, color, framebuffer);
     }
         
-    function drawLine( x0, y0, x1, y1, color, framebuffer)
+    drawLine( x0, y0, x1, y1, color, framebuffer) // change to be pt0.y etc
     {
 		if(Math.abs(y1-y0) <= Math.abs(x1 -x0))
         {
 			if(x0 < x1)
             {
-				drawLineLow(x0, y0, x1, y1, color, framebuffer);
+				this.drawLineLow(x0, y0, x1, y1, color, framebuffer);
 			}
 			else
             {
-				drawLineLow(x1, y1, x0, y0, color, framebuffer);
+				this.drawLineLow(x1, y1, x0, y0, color, framebuffer);
 			}
 		}
 		else
         {
 			if (y0 < y1) 
             {
-				drawLineHigh(x0, y0, x1,y1, color, framebuffer);
+				this.drawLineHigh(x0, y0, x1,y1, color, framebuffer);
 			}
 			else
             {
-				drawLineHigh(x1, y1, x0, y0, color, framebuffer);
+				this.drawLineHigh(x1, y1, x0, y0, color, framebuffer);
 			}
 		}
 	}
 	
-	function drawLineLow(x0, y0, x1, y1, color, framebuffer)
+	drawLineLow(x0, y0, x1, y1, color, framebuffer)
 	{
 		var A = y1 -y0;
 		var B = -(x1 - x0);
@@ -143,7 +158,7 @@ class Renderer {
 		
 		while(x <= x1)
 		{
-			setFramebufferColor(framebuffer, pixelIndex(x,y, framebuffer), color);
+			this.setFramebufferColor(framebuffer, this.pixelIndex(x,y, framebuffer), color);
 			x += 1;
 			if(D <= 0)
 			{
@@ -157,7 +172,7 @@ class Renderer {
 		}
 	}
 	
-	function drawLineHigh(x0, y0, x1, y1, color, framebuffer)
+	drawLineHigh(x0, y0, x1, y1, color, framebuffer)
 	{
 		var A = x1 -x0;
 		var B = y0 -y1;
@@ -174,7 +189,7 @@ class Renderer {
 		while(y < y1)
 		{
 			
-			setFramebufferColor(framebuffer, pixelIndex(x,y, framebuffer), color);
+			this.setFramebufferColor(framebuffer, this.pixelIndex(x,y, framebuffer), color);
 			y+=1;
 			if(D <= 0)
 			{
@@ -186,6 +201,20 @@ class Renderer {
 				x += ix;
 			}	
 		}
+	}
+	
+	setFramebufferColor(framebuffer, px, color)
+	{
+		
+		framebuffer.data[px + 0]= color[0];
+		framebuffer.data[px +1] = color[1];
+		framebuffer.data[px +2]=color[2];
+		framebuffer.data[px +3] = color[3];
+	}
+	
+	pixelIndex(x,y, framebuffer)
+	{
+		return 4* y * framebuffer.width + 4 * x;
 	}
     
 };
